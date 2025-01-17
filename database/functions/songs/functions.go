@@ -19,23 +19,63 @@ func GetSongs() ([]*structs.Song, error) {
 	return database.DbServer.GetSongs()
 }
 
-func CreateSong(song *structs.Song) (int, error) {
+func CreateSong(song *structs.Song) (*structs.Song, error) {
 	if err := database.CheckDB(); err != nil {
-		return 0, err
+		return nil, err
 	}
 	return database.DbServer.CreateSong(song)
 }
 
-func UpdateSong(song *structs.Song) (int, error) {
+func UpdateSong(song *structs.Song) (*structs.Song, error) {
 	if err := database.CheckDB(); err != nil {
-		return 0, err
+		return nil, err
 	}
 	return database.DbServer.UpdateSong(song)
 }
 
-func DeleteSong(id int) (int, error) {
+func DeleteSong(id int) error {
 	if err := database.CheckDB(); err != nil {
-		return 0, err
+		return err
 	}
 	return database.DbServer.DeleteSong(id)
+}
+
+func GetUserLikesSong(userID, songID int) (*structs.UserLikesSong, error) {
+	if err := database.CheckDB(); err != nil {
+		return nil, err
+	}
+	return database.DbServer.GetUserLikesSong(userID, songID)
+}
+func GetUserLikesSongs(userID int) ([]*structs.UserLikesSong, error) {
+	if err := database.CheckDB(); err != nil {
+		return nil, err
+	}
+	return database.DbServer.GetUserLikesSongs(userID)
+}
+func CreateUserLikesSong(userID, songID int) (*structs.UserLikesSong, error) {
+	if err := database.CheckDB(); err != nil {
+		return nil, err
+	}
+	return database.DbServer.CreateUserLikesSong(userID, songID)
+}
+
+func FindArtist(id int) (*structs.Artist, error) {
+	if err := database.CheckDB(); err != nil {
+		return nil, err
+	}
+	return database.DbServer.FindArtist(id)
+}
+
+func GetArtists() ([]*structs.Artist, error) {
+	if err := database.CheckDB(); err != nil {
+		return nil, err
+	}
+	return database.DbServer.GetArtists()
+}
+
+func CreateArtist(artist *structs.Artist) (*structs.Artist, error) {
+	if err := database.CheckDB(); err != nil {
+		return nil, err
+	}
+	return database.DbServer.CreateArtist(artist)
 }

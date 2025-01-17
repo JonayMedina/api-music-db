@@ -7,33 +7,34 @@ import (
 type DBInterface interface {
 	GetUser(id int) (*structs.User, error)
 	GetUsers() ([]*structs.User, error)
-	CreateUser(user *structs.User) (int, error)
+	CreateUser(user *structs.User) (*structs.User, error)
 
 	GetRole(id int) (*structs.Role, error)
 	GetRoles() ([]*structs.Role, error)
-	CreateRole(role *structs.Role) (int, error)
+	CreateRole(role *structs.Role) (*structs.Role, error)
+	UpdateRole(role *structs.Role) (*structs.Role, error)
+	DeleteRole(id int) (int, error)
 
-	GetArtist(id int) (*structs.Artist, error)
+	FindArtist(id int) (*structs.Artist, error)
 	GetArtists() ([]*structs.Artist, error)
-	CreateArtist(artist *structs.Artist) (int, error)
+	CreateArtist(artist *structs.Artist) (*structs.Artist, error)
 
 	GetSong(id int) (*structs.Song, error)
 	GetSongs() ([]*structs.Song, error)
-	CreateSong(song *structs.Song) (int, error)
-	UpdateSong(song *structs.Song) (int, error)
-	DeleteSong(id int) (int, error)
+	CreateSong(song *structs.Song) (*structs.Song, error)
+	UpdateSong(song *structs.Song) (*structs.Song, error)
+	DeleteSong(id int) error
 
 	GetUserLikesSong(userID, songID int) (*structs.UserLikesSong, error)
 	GetUserLikesSongs(userID int) ([]*structs.UserLikesSong, error)
-	CreateUserLikesSong(userID, songID int) (int, error)
+	CreateUserLikesSong(userID, songID int) (*structs.UserLikesSong, error)
 
-	GetUserPlaylist(userID, playlistID int) (*structs.UserPlaylist, error)
+	FindPlaylist(userID, playlistID int) (*structs.UserPlaylist, error)
 	GetUserPlaylists(userID int) ([]*structs.UserPlaylist, error)
-	CreateUserPlaylist(userID, playlistID int) (int, error)
+	CreateUserPlaylist(userID, playlistID int) (*structs.UserPlaylist, error)
 
-	GetPlaylist(playlistID int) (*structs.Playlist, error)
 	GetPlaylists() ([]*structs.Playlist, error)
-	CreatePlaylist(playlist *structs.Playlist) (int, error)
-	UpdatePlaylist(playlist *structs.Playlist) (int, error)
+	CreatePlaylist(playlist *structs.Playlist) (*structs.Playlist, error)
+	UpdatePlaylist(playlist *structs.Playlist) (*structs.Playlist, error)
 	DeletePlaylist(playlistID int) (int, error)
 }

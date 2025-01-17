@@ -57,7 +57,15 @@ CREATE TABLE IF NOT EXISTS `user_playlists` (
   PRIMARY KEY (`user_id`, `playlist_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `user_playlists_songs` (
+CREATE TABLE IF NOT EXISTS `playlists` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `playlists_songs` (
   `playlist_id` int(11) NOT NULL,
   `song_id` int(11) NOT NULL,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
