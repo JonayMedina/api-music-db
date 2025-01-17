@@ -7,7 +7,7 @@ type User struct {
 	Password  string          `json:"password"`
 	CreatedAt string          `json:"created_at"`
 	Roles     []Role          `json:"roles"`
-	Playlists []Playlist      `json:"playlists"`
+	Playlists []UserPlaylist  `json:"playlists"`
 	Likes     []UserLikesSong `json:"likes"`
 }
 
@@ -28,4 +28,11 @@ type UserLikesSong struct {
 	SongID    int    `json:"song_id"`
 	CreatedAt string `json:"created_at"`
 	Song      Song   `json:"song"`
+}
+
+type UserPlaylist struct {
+	UserID     int      `json:"user_id"`
+	PlaylistID int      `json:"playlist_id"`
+	CreatedAt  string   `json:"created_at"`
+	Playlist   Playlist `json:"playlist"`
 }
