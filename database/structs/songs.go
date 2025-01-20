@@ -11,6 +11,8 @@ type Song struct {
 	CoverImage  string  `json:"cover_image,omitempty"`
 	CreatedAt   string  `json:"created_at,omitempty"`
 	PlaylistID  int     `json:"playlist_id,omitempty"`
+	Price       string  `json:"price,omitempty"`
+	Origin      string  `json:"origin,omitempty"`
 	Artist      *Artist `json:"artist,omitempty"`
 }
 
