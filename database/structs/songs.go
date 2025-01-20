@@ -10,6 +10,7 @@ type Song struct {
 	ReleaseDate string `json:"release_date"`
 	CoverImage  string `json:"cover_image"`
 	CreatedAt   string `json:"created_at"`
+	PlaylistID  int    `json:"playlist_id,omitempty"`
 }
 
 type Artist struct {
