@@ -19,6 +19,13 @@ func GetSongs() ([]*structs.Song, error) {
 	return database.DbServer.GetSongs()
 }
 
+func SearchSongs(query, artist, album string, page, limit int) ([]structs.Song, int64, error) {
+	if err := database.CheckDB(); err != nil {
+		return nil, 0, err
+	}
+	return database.DbServer.SearchSongs(query, artist, album, page, limit)
+}
+
 func CreateSong(song *structs.Song) (*structs.Song, error) {
 	if err := database.CheckDB(); err != nil {
 		return nil, err

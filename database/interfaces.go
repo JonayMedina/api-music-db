@@ -21,6 +21,7 @@ type DBInterface interface {
 
 	GetSong(id int) (*structs.Song, error)
 	GetSongs() ([]*structs.Song, error)
+	SearchSongs(query, artist, album string, page, limit int) ([]structs.Song, int64, error)
 	CreateSong(song *structs.Song) (*structs.Song, error)
 	UpdateSong(song *structs.Song) (*structs.Song, error)
 	DeleteSong(id int) error

@@ -16,6 +16,10 @@ func (db DBServer) GetSong(songID int) (*structs.Song, error) {
 	return getSong(db.DB, songID)
 }
 
+func (db DBServer) SearchSongs(query, artist, album string, page, limit int) ([]structs.Song, int64, error) {
+	return searchSongs(db.DB, query, artist, album, page, limit)
+}
+
 func (db DBServer) GetSongByTitle(title string) (*structs.Song, error) {
 	return getSongByTitle(db.DB, title)
 }
@@ -183,6 +187,69 @@ func getSongByArtist(db *sql.DB, artistID int) ([]*structs.Song, error) {
 	}
 	return songs, nil
 
+}
+
+func searchSongs(db *sql.DB, queryParam, artist, album string, page, limit int) ([]structs.Song, int64, error) {
+	query := "SELECT * FROM songs WHERE "
+
+	// Slice para almacenar los argumentos
+	args := make([]interface{}, 0)
+
+	if queryParam != "" {
+		query += " title LIKE ?"
+		args = append(args, "%"+queryParam+"%")
+	}
+	if artist != "" {
+		query += " AND artist_id = ?"
+		args = append(args, artist)
+	}
+	if album != "" {
+		query += " AND album = ?"
+		args = append(args, album)
+	}
+
+	skip := getSkip(page, limit)
+	limit = getLimit(limit)
+
+	query += " LIMIT ? OFFSET ?"
+	args = append(args, limit, skip)
+
+	// Pasar el slice de argumentos usando args...
+	res, err := db.Query(query, args...)
+	if err != nil {
+		log.Println("error al obtener listado de canciones", err)
+		return nil, 0, err
+	}
+	defer res.Close()
+
+	songs := []structs.Song{}
+	for res.Next() {
+		song := structs.Song{}
+		err := res.Scan(
+			&song.ID,
+			&song.Title,
+			&song.ArtistID,
+			&song.Duration,
+			&song.Album,
+			&song.Genre,
+			&song.ReleaseDate,
+			&song.CoverImage,
+			&song.CreatedAt,
+		)
+		if err != nil {
+			log.Println("error al obtener listado de canciones", err)
+			continue
+		}
+		songs = append(songs, song)
+	}
+
+	total, err := countSongs(db, args, limit)
+	if err != nil {
+		log.Println("error al contar canciones", err)
+		return nil, 0, err
+	}
+
+	return songs, int64(total), nil
 }
 
 func createSong(db *sql.DB, song *structs.Song) (*structs.Song, error) {
@@ -444,4 +511,15 @@ func createArtist(db *sql.DB, artist *structs.Artist) (*structs.Artist, error) {
 	}
 	artist.ID = int(id)
 	return artist, nil
+}
+
+func countSongs(db *sql.DB, args []interface{}, limit int) (int, error) {
+	query := `SELECT COUNT(*) FROM songs WHERE `
+
+	row := db.QueryRow(query, args...)
+	var total int
+	err := row.Scan(&total)
+
+	total = getTotalPages(total, limit)
+	return total, err
 }
