@@ -17,9 +17,9 @@ func GetUserPlaylists(userID int) ([]*structs.UserPlaylist, error) {
 	}
 	return database.DbServer.GetUserPlaylists(userID)
 }
-func CreateUserPlaylist(userID, playlistID int) (*structs.UserPlaylist, error) {
+func CreateUserPlaylist(userID, playlistID int) error {
 	if err := database.CheckDB(); err != nil {
-		return nil, err
+		return err
 	}
 	return database.DbServer.CreateUserPlaylist(userID, playlistID)
 }
