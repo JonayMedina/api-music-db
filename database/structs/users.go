@@ -18,27 +18,6 @@ type Role struct {
 	Name string `json:"name"`
 }
 
-type Playlist struct {
-	ID        int     `json:"id"`
-	Name      string  `json:"name"`
-	CreatedAt string  `json:"created_at"`
-	Songs     []*Song `json:"songs,omitempty"`
-}
-
-type UserLikesSong struct {
-	UserID    int    `json:"user_id"`
-	SongID    int    `json:"song_id"`
-	CreatedAt string `json:"created_at"`
-	Song      *Song  `json:"song,omitempty"`
-}
-
-type UserPlaylist struct {
-	UserID     int       `json:"user_id"`
-	PlaylistID int       `json:"playlist_id"`
-	CreatedAt  string    `json:"created_at"`
-	Playlist   *Playlist `json:"playlist,omitempty"`
-}
-
 func (user *User) HashPassword() error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
