@@ -7,6 +7,10 @@ import (
 	"github.com/JonayMedina/api-music-db/database/structs"
 )
 
+func (db DBServer) GetPlaylists() ([]*structs.Playlist, error) {
+	return getPlaylists(db.DB)
+}
+
 func (db DBServer) CreateUserPlaylist(userID, playlistID int) error {
 	return createUserPlaylist(db.DB, userID, playlistID)
 }
@@ -164,4 +168,28 @@ func deletePlaylist(db *sql.DB, playlistID int) (int, error) {
 		return 0, err
 	}
 	return playlistID, nil
+}
+
+func getPlaylists(db *sql.DB) ([]*structs.Playlist, error) {
+	playlists := []*structs.Playlist{}
+
+	query := `SELECT * FROM playlists`
+	rows, err := db.Query(query)
+	if err != nil {
+		log.Println("error al obtener listado de playlists", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		playlist := &structs.Playlist{}
+		err := rows.Scan(&playlist.ID, &playlist.Name)
+		if err != nil {
+			log.Println("error al obtener listado de playlists", err)
+			continue
+		}
+		playlists = append(playlists, playlist)
+	}
+
+	return playlists, nil
 }

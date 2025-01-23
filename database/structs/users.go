@@ -1,5 +1,7 @@
 package structs
 
+import "golang.org/x/crypto/bcrypt"
+
 type User struct {
 	ID        int              `json:"id"`
 	Username  string           `json:"username"`
@@ -35,4 +37,17 @@ type UserPlaylist struct {
 	PlaylistID int       `json:"playlist_id"`
 	CreatedAt  string    `json:"created_at"`
 	Playlist   *Playlist `json:"playlist,omitempty"`
+}
+
+func (user *User) HashPassword() error {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	user.Password = string(hashedPassword)
+	return nil
+}
+
+func (user *User) CheckPassword(password string) bool {
+	return bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)) == nil
 }
