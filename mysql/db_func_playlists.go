@@ -107,8 +107,7 @@ func getUserPlaylists(db *sql.DB, userID int) ([]*structs.Playlist, error) {
 		up.user_id,
 		up.created_at,
 	FROM playlists p
-	WITH (NOLOCK)
-	INNER JOIN users_playlists up WITH (NOLOCK) ON up.playlist_id = p.id
+	INNER JOIN users_playlists up ON up.playlist_id = p.id
 	WHERE up.user_id = ?`
 
 	rows, err := db.Query(query, userID)

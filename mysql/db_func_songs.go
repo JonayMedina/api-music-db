@@ -17,7 +17,7 @@ func (db DBServer) GetSong(songID int) (*structs.Song, error) {
 }
 
 func (db DBServer) SearchSongs(request, artist, album string, page, limit int) ([]*structs.Song, int64, error) {
-	sqlQuery := "SELECT * FROM songs WITH (NOLOCK) WHERE "
+	sqlQuery := "SELECT * FROM songs WHERE "
 
 	// Slice para almacenar los argumentos
 	args := make([]interface{}, 0)
@@ -119,8 +119,8 @@ func (db DBServer) GetAllUserSongs(userID int) ([]*structs.UserLikesSong, error)
 			s.release_date,
 			s.cover_image,
 			s.created_at
-	FROM users_likes_songs uls WITH (NOLOCK)
-	INNER JOIN songs s WITH (NOLOCK) ON s.id = uls.song_id
+	FROM users_likes_songs uls 
+	INNER JOIN songs s ON s.id = uls.song_id
 	WHERE uls.user_id = ?
 	`
 
@@ -401,8 +401,8 @@ func getUserLikesSong(db *sql.DB, userID, songID int) (*structs.UserLikesSong, e
 			s.release_date,
 			s.cover_image,
 			s.created_at
-	FROM users_likes_songs uls WITH (NOLOCK)
-	INNER JOIN songs s WITH (NOLOCK) ON s.id = uls.song_id
+	FROM users_likes_songs uls 
+	INNER JOIN songs s ON s.id = uls.song_id
 	WHERE uls.user_id = ? 
 	AND uls.song_id = ?
 	LIMIT 1`
