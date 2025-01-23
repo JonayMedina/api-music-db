@@ -36,12 +36,12 @@ func (db DBServer) SearchSongs(request, artist, album string, page, limit int) (
 		args = append(args, album)
 	}
 
-	skip := getSkip(page, limit)
 	limit = getLimit(limit)
+	skip := getSkip(page, limit)
 
 	sqlQuery += " LIMIT ? OFFSET ?"
 	args = append(args, limit, skip)
-	fmt.Println(" sqlQuery on search songs", sqlQuery)
+	fmt.Println(" sqlQuery on search songs", sqlQuery, args)
 	// Pasar el slice de argumentos usando args...
 	res, err := db.DB.Query(sqlQuery, args...)
 	if err != nil {
