@@ -57,7 +57,7 @@ func GetUserLikesSongs(userID int) ([]*structs.UserLikesSong, error) {
 	if err := database.CheckDB(); err != nil {
 		return nil, err
 	}
-	return database.DbServer.GetUserLikesSongs(userID)
+	return database.DbServer.GetAllUserSongs(userID)
 }
 func CreateUserLikesSong(userID, songID int) (*structs.UserLikesSong, error) {
 	if err := database.CheckDB(); err != nil {
