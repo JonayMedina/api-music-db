@@ -27,6 +27,10 @@ func (db DBServer) DeletePlaylist(playlistID int) (int, error) {
 	return deletePlaylist(db.DB, playlistID)
 }
 
+func (db DBServer) CreatePlaylist(playlist *structs.Playlist) (*structs.Playlist, error) {
+	return createPlaylist(db.DB, playlist)
+}
+
 func createUserPlaylist(db *sql.DB, userID, playlistID int) error {
 	query := `INSERT INTO users_playlists (user_id, playlist_id, created_at) VALUES (?, ?, ?)`
 	_, err := db.Exec(query, userID, playlistID, getNowDateTime())
@@ -36,6 +40,16 @@ func createUserPlaylist(db *sql.DB, userID, playlistID int) error {
 	}
 
 	return nil
+}
+
+func createPlaylist(db *sql.DB, playlist *structs.Playlist) (*structs.Playlist, error) {
+	query := `INSERT INTO playlists (name, created_at) VALUES (?, ?)`
+	_, err := db.Exec(query, playlist.Name, getNowDateTime())
+	if err != nil {
+		log.Println("error al crear el playlist", err)
+		return nil, err
+	}
+	return playlist, nil
 }
 
 func findPlaylist(db *sql.DB, userID, playlistID int) (*structs.UserPlaylist, error) {
