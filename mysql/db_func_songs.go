@@ -160,7 +160,7 @@ func (db DBServer) GetAllUserSongs(userID int) ([]*structs.UserLikesSong, error)
 
 }
 
-func (db DBServer) CreateUserLikesSongs(userID, songID int) (*structs.UserLikesSong, error) {
+func (db DBServer) CreateUserLikesSong(userID, songID int) (*structs.UserLikesSong, error) {
 	return createUserLikesSong(db.DB, userID, songID)
 }
 
