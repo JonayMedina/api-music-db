@@ -3,6 +3,7 @@ package mysql
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
 
 	"github.com/JonayMedina/api-music-db/database/structs"
@@ -40,7 +41,7 @@ func (db DBServer) SearchSongs(request, artist, album string, page, limit int) (
 
 	sqlQuery += " LIMIT ? OFFSET ?"
 	args = append(args, limit, skip)
-	log.Println(" sqlQuery on search songs", sqlQuery)
+	fmt.Println(" sqlQuery on search songs", sqlQuery)
 	// Pasar el slice de argumentos usando args...
 	res, err := db.DB.Query(sqlQuery, args...)
 	if err != nil {
