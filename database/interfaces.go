@@ -32,7 +32,7 @@ type DBInterface interface {
 
 	FindPlaylist(userID, playlistID int) (*structs.UserPlaylist, error)
 	GetUserPlaylists(userID int) ([]*structs.UserPlaylist, error)
-	CreateUserPlaylist(userID, playlistID int) (*structs.UserPlaylist, error)
+	CreateUserPlaylist(userID, playlistID int) error
 
 	GetPlaylists() ([]*structs.Playlist, error)
 	CreatePlaylist(playlist *structs.Playlist) (*structs.Playlist, error)
