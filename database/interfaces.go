@@ -26,7 +26,6 @@ type DBInterface interface {
 	UpdateSong(song *structs.Song) (*structs.Song, error)
 	DeleteSong(id int) error
 
-	GetUserLikesSong(userID, songID int) (*structs.UserLikesSong, error)
 	GetAllUserSongs(userID int) ([]*structs.UserLikesSong, error)
 	CreateUserLikesSong(userID, songID int) (*structs.UserLikesSong, error)
 
