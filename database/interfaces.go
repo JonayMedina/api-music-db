@@ -27,7 +27,7 @@ type DBInterface interface {
 	DeleteSong(id int) error
 
 	GetUserLikesSong(userID, songID int) (*structs.UserLikesSong, error)
-	GetUserLikesSongs(userID int) ([]*structs.UserLikesSong, error)
+	GetAllUserSongs(userID int) ([]*structs.UserLikesSong, error)
 	CreateUserLikesSong(userID, songID int) (*structs.UserLikesSong, error)
 
 	FindPlaylist(userID, playlistID int) (*structs.UserPlaylist, error)

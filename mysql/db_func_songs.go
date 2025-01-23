@@ -99,11 +99,68 @@ func (db DBServer) DeleteSong(songID int) error {
 	return deleteSong(db.DB, songID)
 }
 
-func (db DBServer) GetUserLikesSong(userID, songID int) ([]*structs.UserLikesSong, error) {
+func (db DBServer) GetUserLikesSong(userID, songID int) (*structs.UserLikesSong, error) {
 	return getUserLikesSong(db.DB, userID, songID)
 }
 
-func (db DBServer) CreateUserLikesSong(userID, songID int) (*structs.UserLikesSong, error) {
+func (db DBServer) GetAllUserSongs(userID int) ([]*structs.UserLikesSong, error) {
+	UsersLikesSongs := []*structs.UserLikesSong{}
+
+	query := `SELECT * 
+			uls.user_id,
+			uls.song_id,
+			uls.created_at,
+			s.id,
+			s.title,
+			s.artist_id,
+			s.album,
+			s.duration,
+			s.genre,
+			s.release_date,
+			s.cover_image,
+			s.created_at
+	FROM users_likes_songs uls WITH (NOLOCK)
+	INNER JOIN songs s WITH (NOLOCK) ON s.id = uls.song_id
+	WHERE uls.user_id = ?
+	`
+
+	var err error
+	rows, err := db.DB.Query(query, userID)
+
+	if err != nil {
+		log.Println("error al obtener los likes de la cancion", err)
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		likedSong := &structs.UserLikesSong{Song: &structs.Song{}}
+		err := rows.Scan(
+			&likedSong.UserID,
+			&likedSong.SongID,
+			&likedSong.CreatedAt,
+			&likedSong.Song.ID,
+			&likedSong.Song.Title,
+			&likedSong.Song.ArtistID,
+			&likedSong.Song.Album,
+			&likedSong.Song.Duration,
+			&likedSong.Song.Genre,
+			&likedSong.Song.ReleaseDate,
+			&likedSong.Song.CoverImage,
+			&likedSong.Song.CreatedAt,
+		)
+		if err != nil {
+			log.Println("error al obtener los likes de la cancion", err)
+			return nil, err
+		}
+		UsersLikesSongs = append(UsersLikesSongs, likedSong)
+	}
+	return UsersLikesSongs, nil
+
+}
+
+func (db DBServer) CreateUserLikesSongs(userID, songID int) (*structs.UserLikesSong, error) {
 	return createUserLikesSong(db.DB, userID, songID)
 }
 
@@ -330,10 +387,8 @@ func deleteSong(db *sql.DB, songID int) error {
 	return nil
 }
 
-func getUserLikesSong(db *sql.DB, userID, songID int) ([]*structs.UserLikesSong, error) {
-	UsersLikesSongs := []*structs.UserLikesSong{}
-
-	query := `SELECT * 
+func getUserLikesSong(db *sql.DB, userID, songID int) (*structs.UserLikesSong, error) {
+	query := `SELECT 
 			uls.user_id,
 			uls.song_id,
 			uls.created_at,
@@ -346,21 +401,32 @@ func getUserLikesSong(db *sql.DB, userID, songID int) ([]*structs.UserLikesSong,
 			s.release_date,
 			s.cover_image,
 			s.created_at
-	FROM users_likes_songs uls
-	INNER JOIN songs s ON s.id = uls.song_id
-	WHERE uls.user_id = ?
-	`
-	if songID != 0 {
-		query += "AND uls.song_id = ?"
-	}
+	FROM users_likes_songs uls WITH (NOLOCK)
+	INNER JOIN songs s WITH (NOLOCK) ON s.id = uls.song_id
+	WHERE uls.user_id = ? 
+	AND uls.song_id = ?
+	LIMIT 1`
 
-	var err error
-	var rows *sql.Rows
+	row := db.QueryRow(query, userID, songID)
 
-	if songID != 0 {
-		rows, err = db.Query(query, userID, songID)
-	} else {
-		rows, err = db.Query(query, userID)
+	Song := &structs.UserLikesSong{}
+	err := row.Scan(
+		&Song.UserID,
+		&Song.SongID,
+		&Song.CreatedAt,
+		&Song.Song.ID,
+		&Song.Song.Title,
+		&Song.Song.ArtistID,
+		&Song.Song.Album,
+		&Song.Song.Duration,
+		&Song.Song.Genre,
+		&Song.Song.ReleaseDate,
+		&Song.Song.CoverImage,
+		&Song.Song.CreatedAt,
+	)
+
+	if err == sql.ErrNoRows {
+		return nil, nil
 	}
 
 	if err != nil {
@@ -368,31 +434,7 @@ func getUserLikesSong(db *sql.DB, userID, songID int) ([]*structs.UserLikesSong,
 		return nil, err
 	}
 
-	defer rows.Close()
-
-	for rows.Next() {
-		likedSong := &structs.UserLikesSong{Song: &structs.Song{}}
-		err := rows.Scan(
-			&likedSong.UserID,
-			&likedSong.SongID,
-			&likedSong.CreatedAt,
-			&likedSong.Song.ID,
-			&likedSong.Song.Title,
-			&likedSong.Song.ArtistID,
-			&likedSong.Song.Album,
-			&likedSong.Song.Duration,
-			&likedSong.Song.Genre,
-			&likedSong.Song.ReleaseDate,
-			&likedSong.Song.CoverImage,
-			&likedSong.Song.CreatedAt,
-		)
-		if err != nil {
-			log.Println("error al obtener los likes de la cancion", err)
-			return nil, err
-		}
-		UsersLikesSongs = append(UsersLikesSongs, likedSong)
-	}
-	return UsersLikesSongs, nil
+	return Song, nil
 }
 
 func createUserLikesSong(db *sql.DB, userID, songID int) (*structs.UserLikesSong, error) {
