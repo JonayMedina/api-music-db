@@ -47,12 +47,12 @@ func DeleteSong(id int) error {
 	return database.DbServer.DeleteSong(id)
 }
 
-func GetUserLikesSong(userID, songID int) (*structs.UserLikesSong, error) {
-	if err := database.CheckDB(); err != nil {
-		return nil, err
-	}
-	return database.DbServer.GetUserLikesSong(userID, songID)
-}
+//	func GetUserLikesSong(userID, songID int) (*structs.UserLikesSong, error) {
+//		if err := database.CheckDB(); err != nil {
+//			return nil, err
+//		}
+//		return database.DbServer.GetUserLikesSong(userID, songID)
+//	}
 func GetAllUserSongs(userID int) ([]*structs.UserLikesSong, error) {
 	if err := database.CheckDB(); err != nil {
 		return nil, err
