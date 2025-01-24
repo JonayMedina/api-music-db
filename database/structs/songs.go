@@ -9,7 +9,7 @@ type Song struct {
 	Duration    int       `json:"duration,omitempty"`
 	Album       string    `json:"album,omitempty"`
 	Genre       string    `json:"genre,omitempty"`
-	ReleaseDate time.Time `json:"release_date,omitempty"`
+	ReleaseDate string    `json:"release_date,omitempty"`
 	CoverImage  string    `json:"cover_image,omitempty"`
 	CreatedAt   time.Time `json:"created_at,omitempty"`
 	PlaylistID  int       `json:"playlist_id,omitempty"`
