@@ -309,6 +309,7 @@ func getSongByArtist(db *sql.DB, artistID int) ([]*structs.Song, error) {
 }
 
 func createSong(db *sql.DB, song *structs.Song) (*structs.Song, error) {
+	createdAt := getNowDateTime()
 	query := `INSERT INTO songs (
 		title,
 		artist_id,
@@ -319,7 +320,7 @@ func createSong(db *sql.DB, song *structs.Song) (*structs.Song, error) {
 		cover_image,
 		created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
 
-	res, err := db.Exec(query, song.Title, song.ArtistID, song.Duration, song.Album, song.Genre, song.ReleaseDate, song.CoverImage, song.CreatedAt)
+	res, err := db.Exec(query, song.Title, song.ArtistID, song.Duration, song.Album, song.Genre, song.ReleaseDate, song.CoverImage, createdAt)
 
 	if err != nil {
 		log.Println("error al crear la cancion", err)
