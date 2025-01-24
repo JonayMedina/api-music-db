@@ -564,7 +564,7 @@ func countSongs(db *sql.DB, args []interface{}, options string, limit int) (int,
 	total := 0
 
 	query := `SELECT COUNT(*) FROM songs WHERE ` + options
-
+	log.Println("countSongs query", query, args)
 	rows, err := db.Query(query, args...)
 	if err != nil {
 		log.Println("error al contar canciones", err)
@@ -580,7 +580,7 @@ func countSongs(db *sql.DB, args []interface{}, options string, limit int) (int,
 		}
 
 	}
-
+	log.Println("countSongs total", total)
 	total = getTotalPages(total, limit)
 	return total, nil
 }
