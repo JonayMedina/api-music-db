@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/JonayMedina/api-music-db/database/structs"
 )
@@ -177,6 +178,10 @@ func (db DBServer) GetArtists() ([]*structs.Artist, error) {
 
 func (db DBServer) CreateArtist(artist *structs.Artist) (*structs.Artist, error) {
 	return createArtist(db.DB, artist)
+}
+
+func (db DBServer) DeleteManySongs(songs []*structs.Song) error {
+	return deleteManySongs(db.DB, songs)
 }
 
 func getSongs(db *sql.DB) ([]*structs.Song, error) {
@@ -578,4 +583,43 @@ func countSongs(db *sql.DB, args []interface{}, options string, limit int) (int,
 
 	total = getTotalPages(total, limit)
 	return total, nil
+}
+
+func deleteManySongs(db *sql.DB, songs []*structs.Song) error {
+	// Si no hay canciones para eliminar, retornamos nil
+	if len(songs) == 0 {
+		return nil
+	}
+
+	// Crear slice para almacenar los IDs
+	songIDs := make([]interface{}, len(songs))
+	for i, song := range songs {
+		songIDs[i] = song.ID
+	}
+
+	// Construir query con placeholders dinámicos
+	placeholders := make([]string, len(songs))
+	for i := range songs {
+		placeholders[i] = "?"
+	}
+	query := fmt.Sprintf("DELETE FROM songs WHERE id IN (%s)", strings.Join(placeholders, ","))
+
+	// Ejecutar la eliminación
+	res, err := db.Exec(query, songIDs...)
+	if err != nil {
+		log.Println("error al eliminar las canciones:", err)
+		return err
+	}
+
+	rows, err := res.RowsAffected()
+	if err != nil {
+		log.Println("error al obtener el número de filas afectadas:", err)
+		return err
+	}
+
+	if rows == 0 {
+		return errors.New("no se encontraron canciones para eliminar")
+	}
+
+	return nil
 }

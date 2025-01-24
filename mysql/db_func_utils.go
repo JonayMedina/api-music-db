@@ -1,6 +1,7 @@
 package mysql
 
 import (
+	"log"
 	"time"
 )
 
@@ -9,6 +10,7 @@ func getNowDateTime() string {
 }
 
 func getSkip(page, limit int) int {
+	log.Println("getSkip", page, limit)
 	if page != 0 && limit != 0 {
 		return (page - 1) * limit
 	}
@@ -16,6 +18,7 @@ func getSkip(page, limit int) int {
 }
 
 func getLimit(limit int) int {
+	log.Println("getLimit", limit)
 	if limit != 0 {
 		return limit
 	}
@@ -23,6 +26,7 @@ func getLimit(limit int) int {
 }
 
 func getTotalPages(total int, limit int) int {
+	log.Println("getTotalPages", total, limit)
 	if limit != 0 {
 		return (int(total) + limit - 1) / limit
 	}
