@@ -22,24 +22,26 @@ func (db DBServer) SearchSongs(request, artist, album string, page, limit int) (
 
 	// Slice para almacenar los argumentos
 	args := make([]interface{}, 0)
-
+	var options string
 	if request != "" {
-		sqlQuery += " title LIKE ?"
+		options += " title LIKE ?"
 		args = append(args, "%"+request+"%")
 	}
 	if artist != "" {
-		sqlQuery += " AND artist_id = ?"
+		options += " AND artist_id = ?"
 		args = append(args, artist)
 	}
 	if album != "" {
-		sqlQuery += " AND album = ?"
+		options += " AND album = ?"
 		args = append(args, album)
 	}
 
 	limit = getLimit(limit)
 	skip := getSkip(page, limit)
 
-	sqlQuery += " LIMIT ? OFFSET ?"
+	sqlQuery += options + " LIMIT ? OFFSET ?"
+	argsCount := args
+
 	args = append(args, limit, skip)
 	fmt.Println(" sqlQuery on search songs", sqlQuery, args)
 	// Pasar el slice de argumentos usando args...
@@ -71,7 +73,7 @@ func (db DBServer) SearchSongs(request, artist, album string, page, limit int) (
 		songs = append(songs, song)
 	}
 
-	total, err := countSongs(db.DB, args, limit)
+	total, err := countSongs(db.DB, argsCount, options, limit)
 	if err != nil {
 		log.Println("error al contar canciones", err)
 		return nil, 0, err
@@ -552,13 +554,27 @@ func createArtist(db *sql.DB, artist *structs.Artist) (*structs.Artist, error) {
 	return artist, nil
 }
 
-func countSongs(db *sql.DB, args []interface{}, limit int) (int, error) {
-	query := `SELECT COUNT(*) FROM songs WHERE `
+func countSongs(db *sql.DB, args []interface{}, options string, limit int) (int, error) {
+	total := 0
 
-	row := db.QueryRow(query, args...)
-	var total int
-	err := row.Scan(&total)
+	query := `SELECT COUNT(*) FROM songs WHERE ` + options
+
+	rows, err := db.Query(query, args...)
+	if err != nil {
+		log.Println("error al contar canciones", err)
+		return 0, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		err := rows.Scan(&total)
+		if err != nil {
+			log.Println("error al contar canciones", err)
+			return 0, err
+		}
+
+	}
 
 	total = getTotalPages(total, limit)
-	return total, err
+	return total, nil
 }
