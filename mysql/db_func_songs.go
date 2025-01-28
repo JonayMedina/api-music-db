@@ -218,7 +218,7 @@ func getSongs(db *sql.DB) ([]*structs.Song, error) {
 func getSong(db *sql.DB, songID int) (*structs.Song, error) {
 	song := &structs.Song{}
 
-	rows, err := db.Query(`SELECT * FROM songs WHERE id = ?`, songID)
+	rows, err := db.Query(`SELECT * FROM songs WHERE id = ? LIMIT 1`, songID)
 	if err != nil {
 		log.Println("error al obtener la cancion", err)
 		return nil, err
@@ -249,7 +249,7 @@ func getSong(db *sql.DB, songID int) (*structs.Song, error) {
 func getSongByTitle(db *sql.DB, title string) (*structs.Song, error) {
 	song := &structs.Song{}
 
-	rows, err := db.Query(`SELECT * FROM songs WHERE title LIKE(?)`, title)
+	rows, err := db.Query(`SELECT * FROM songs WHERE title LIKE(?) LIMIT 1`, title)
 	if err != nil {
 		log.Println("error al obtener la cancion", err)
 		return nil, err
@@ -580,8 +580,9 @@ func countSongs(db *sql.DB, args []interface{}, options string, limit int) (int,
 		}
 
 	}
-	log.Println("countSongs total", total)
-	total = getTotalPages(total, limit)
+	// log.Println("countSongs total", total)
+	// total = getTotalPages(total, limit)
+	// log.Println("countSongs new total", total)
 	return total, nil
 }
 
