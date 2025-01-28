@@ -40,6 +40,13 @@ func UpdateSong(song *structs.Song) (*structs.Song, error) {
 	return database.DbServer.UpdateSong(song)
 }
 
+func GetSongByTitle(title string) (*structs.Song, error) {
+	if err := database.CheckDB(); err != nil {
+		return nil, err
+	}
+	return database.DbServer.GetSongByTitle(title)
+}
+
 func DeleteSong(id int) error {
 	if err := database.CheckDB(); err != nil {
 		return err
