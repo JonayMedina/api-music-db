@@ -7,6 +7,7 @@ import (
 type DBInterface interface {
 	GetUser(id int) (*structs.User, error)
 	GetUsers() ([]*structs.User, error)
+	GetUserByEmail(email string) (*structs.User, error)
 	CreateUser(user *structs.User) (*structs.User, error)
 
 	GetRole(id int) (*structs.Role, error)

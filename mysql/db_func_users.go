@@ -50,7 +50,6 @@ func getUser(db *sql.DB, userID int) (*structs.User, error) {
 		u.id,
 		u.username,
 		u.email,
-		u.password,
 		u.created_at
 	FROM users u WHERE u.id = ?`, userID)
 
@@ -67,7 +66,6 @@ func getUser(db *sql.DB, userID int) (*structs.User, error) {
 			&user.ID,
 			&user.Username,
 			&user.Email,
-			&user.Password,
 			&user.CreatedAt,
 		)
 		if err != nil {
@@ -86,6 +84,32 @@ func createUser(db *sql.DB, user *structs.User) (*structs.User, error) {
 	if err != nil {
 		log.Println("error al crear el usuario", err)
 		return nil, err
+	}
+	return user, nil
+}
+
+func getUserByEmail(db *sql.DB, email string) (*structs.User, error) {
+	user := &structs.User{}
+
+	rows, err := db.Query(`SELECT
+		u.id,
+		u.username,
+		u.email,
+		u.created_at
+	FROM users u WHERE u.email = ? LIMIT 1`, email)
+	if err != nil {
+		log.Println("error al obtener el usuario por email", err)
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		err := rows.Scan(&user.ID, &user.Username, &user.Email, &user.CreatedAt)
+		if err != nil {
+			log.Println("error al obtener el usuario", err)
+			return nil, err
+		}
 	}
 	return user, nil
 }

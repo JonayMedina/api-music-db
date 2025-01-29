@@ -25,3 +25,10 @@ func CreateUser(user *structs.User) (*structs.User, error) {
 	}
 	return database.DbServer.CreateUser(user)
 }
+
+func GetUserByEmail(email string) (*structs.User, error) {
+	if err := database.CheckDB(); err != nil {
+		return nil, err
+	}
+	return database.DbServer.GetUserByEmail(email)
+}
