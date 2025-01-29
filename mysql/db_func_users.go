@@ -88,10 +88,10 @@ func createUser(db *sql.DB, user *structs.User) (*structs.User, error) {
 	return user, nil
 }
 
-func getUserByEmail(db *sql.DB, email string) (*structs.User, error) {
+func (db DBServer) GetUserByEmail(email string) (*structs.User, error) {
 	user := &structs.User{}
 
-	rows, err := db.Query(`SELECT
+	rows, err := db.DB.Query(`SELECT
 		u.id,
 		u.username,
 		u.email,
