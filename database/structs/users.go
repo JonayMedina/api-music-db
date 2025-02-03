@@ -1,17 +1,20 @@
 package structs
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"golang.org/x/crypto/bcrypt"
+)
 
 type User struct {
-	ID        int              `json:"id,omitempty"`
-	Username  string           `json:"username"`
-	Email     string           `json:"email"`
-	Password  string           `json:"password"`
-	MongoID   string           `json:"mongo_id,omitempty"`
-	CreatedAt string           `json:"created_at"`
-	Roles     []*Role          `json:"roles,omitempty"`
-	Playlists []*UserPlaylist  `json:"playlists,omitempty"`
-	Likes     []*UserLikesSong `json:"likes,omitempty"`
+	ID        int                `json:"id,omitempty"`
+	Username  string             `json:"username"`
+	Email     string             `json:"email"`
+	Password  string             `json:"password"`
+	MongoID   primitive.ObjectID `json:"mongoid,omitempty" bson:"_id,omitempty"`
+	CreatedAt string             `json:"created_at"`
+	Roles     []*Role            `json:"roles,omitempty"`
+	Playlists []*UserPlaylist    `json:"playlists,omitempty"`
+	Likes     []*UserLikesSong   `json:"likes,omitempty"`
 }
 
 type Role struct {

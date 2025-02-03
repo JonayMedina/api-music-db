@@ -2,6 +2,7 @@ package mysql
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	"github.com/JonayMedina/api-music-db/database/structs"
@@ -77,14 +78,23 @@ func getUser(db *sql.DB, userID int) (*structs.User, error) {
 }
 
 func createUser(db *sql.DB, user *structs.User) (*structs.User, error) {
+	fmt.Printf("mysql createUser %+v\n", user)
+
 	query := `INSERT INTO users (username, email, password, created_at) VALUES (?, ?, ?, ?)`
 	user.HashPassword()
 
-	_, err := db.Exec(query, user.Username, user.Email, user.Password, getNowDateTime())
+	result, err := db.Exec(query, user.Username, user.Email, user.Password, getNowDateTime())
 	if err != nil {
 		log.Println("error al crear el usuario", err)
 		return nil, err
 	}
+	fmt.Println("result", result)
+	id, err := result.LastInsertId()
+	if err != nil {
+		log.Println("error al obtener el id del usuario", err)
+		return nil, err
+	}
+	user.ID = int(id)
 	return user, nil
 }
 

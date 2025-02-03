@@ -74,7 +74,7 @@ func (db DBServer) SearchSongs(request, artist, album string, page, limit int) (
 		songs = append(songs, song)
 	}
 
-	total, err := countSongs(db.DB, argsCount, options, limit)
+	total, err := countSongs(db.DB, argsCount, options)
 	if err != nil {
 		log.Println("error al contar canciones", err)
 		return nil, 0, err
@@ -560,7 +560,7 @@ func createArtist(db *sql.DB, artist *structs.Artist) (*structs.Artist, error) {
 	return artist, nil
 }
 
-func countSongs(db *sql.DB, args []interface{}, options string, limit int) (int, error) {
+func countSongs(db *sql.DB, args []interface{}, options string) (int, error) {
 	total := 0
 
 	query := `SELECT COUNT(*) FROM songs WHERE ` + options
